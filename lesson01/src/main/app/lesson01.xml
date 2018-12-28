@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:vm="http://www.mulesoft.org/schema/mule/vm" xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns:jms="http://www.mulesoft.org/schema/mule/jms" xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xmlns:spring="http://www.springframework.org/schema/beans" 
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-current.xsd
+http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/jms http://www.mulesoft.org/schema/mule/jms/current/mule-jms.xsd
+http://www.mulesoft.org/schema/mule/vm http://www.mulesoft.org/schema/mule/vm/current/mule-vm.xsd">
+    <jms:activemq-connector name="Active_MQ" validateConnections="true" doc:name="Active MQ"/>
+    <flow name="lesson01Flow1">
+        <vm:inbound-endpoint exchange-pattern="request-response" path="qs" doc:name="VM"/>
+        <logger level="INFO" doc:name="Logger"/>
+        <flow-ref name="lesson01Flow" doc:name="Flow Reference"/>
+        <logger level="INFO" doc:name="Logger"/>
+    </flow>
+    <flow name="lesson01Flow">
+        <http:inbound-endpoint exchange-pattern="request-response" host="localhost" port="8081" doc:name="HTTP"/>
+       <logger message="========================== #[payload]==================================" level="INFO" doc:name="Copy_of_Copy_of_Logger"/>
+        <byte-array-to-string-transformer doc:name="Byte Array to String"/>
+        <logger message="========================== #[payload]==================================" level="INFO" doc:name="Copy_of_Logger"/>
+        <jms:outbound-endpoint queue="quickstart"  doc:name="JMS" connector-ref="Active_MQ"/>
+        <logger message="========================== #[payload]==================================" level="INFO" doc:name="Logger"/>
+    </flow>
+</mule>
