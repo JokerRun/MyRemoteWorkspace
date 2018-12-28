@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:jms="http://www.mulesoft.org/schema/mule/jms" xmlns:mulexml="http://www.mulesoft.org/schema/mule/xml" xmlns:vm="http://www.mulesoft.org/schema/mule/vm" xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xmlns:spring="http://www.springframework.org/schema/beans" 
+	xmlns:test="http://www.mulesoft.org/schema/mule/test"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-current.xsd
+http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/vm http://www.mulesoft.org/schema/mule/vm/current/mule-vm.xsd
+http://www.mulesoft.org/schema/mule/test http://www.mulesoft.org/schema/mule/test/current/mule-test.xsd
+http://www.mulesoft.org/schema/mule/jms http://www.mulesoft.org/schema/mule/jms/current/mule-jms.xsd
+http://www.mulesoft.org/schema/mule/xml http://www.mulesoft.org/schema/mule/xml/current/mule-xml.xsd">
+    <flow name="1.main-flow">
+        <composite-source doc:name="Composite Source">
+            <vm:inbound-endpoint exchange-pattern="one-way" path="main-flow.one-way" doc:name="VM"/>
+            <vm:inbound-endpoint exchange-pattern="request-response" path="main-flow.request-response" doc:name="VM"/>
+        </composite-source>
+        <expression-transformer expression="#[message.payload + '.main1@' + java.lang.Thread.currentThread().getName()]" doc:name="Expression"/>
+        <logger message="main &#31532;&#19968;&#38454;&#27573;&#65306;&#65306;&#65306;&#65306;&#65306;&#65306;&#65306;&#65306;&#65306;&#65306;&#65306;&#65306;&#65306;&#65306;#[payload] " level="INFO" doc:name="Logger"/>
+        <choice doc:name="Choice">
+            <when expression="message.payload.startsWith('spf')">
+                <flow-ref name="2.sync-private-flow" doc:name="Flow Reference"/>
+            </when>
+            <when expression="message.payload.startsWith('apf')">
+                <async doc:name="Async">
+                    <flow-ref name="3.async-private-flow" doc:name="Flow Reference"/>
+                </async>
+            </when>
+            <when expression="message.payload.startsWith('soapf')">
+                <flow-ref name="4.sync-or-async-private-flow" doc:name="Flow Reference"/>
+            </when>
+        </choice>
+        <expression-transformer expression="#[message.payload + '.main2@' + java.lang.Thread.currentThread().getName()]" doc:name="Expression"/>
+        <logger message="main&#31532;&#20108;&#38454;&#27573;&#65306;&#65306;&#65306;&#65306;&#65306;&#65306;&#65306;&#65306;&#65306;&#65306;&#65306;&#65306;&#65306;&#65306; #[payload];" level="INFO" doc:name="Copy_of_Logger"/>
+    </flow>
+    <flow name="2.sync-private-flow" processingStrategy="synchronous">
+        <expression-transformer expression="#[message.payload + '.2.sync-private-flow@' + java.lang.Thread.currentThread().getName()]" doc:name="Expression"/>
+        <logger message="sync-private-flow &#38454;&#27573;&#65306;&#65306;&#65306;&#65306;&#65306;&#65306;&#65306;&#65306;&#65306;&#65306;&#65306;&#65306;&#65306;&#65306; #[payload];" level="INFO" doc:name="Logger"/>
+        <test:component />
+    </flow>
+    <flow name="3.async-private-flow" processingStrategy="asynchronous">
+        <expression-transformer expression="#[message.payload + '.3.async-private-flow@' + java.lang.Thread.currentThread().getName()]" doc:name="Expression"/>
+        <logger message="async-private-flow&#38454;&#27573;&#65306;&#65306;&#65306;&#65306;&#65306;&#65306;&#65306;&#65306;&#65306;&#65306;&#65306;&#65306;&#65306;&#65306;#[payload];" level="INFO" doc:name="Copy_of_Logger"/>
+                <test:component />
+    </flow>
+    <flow name="4.sync-or-async-private-flow">
+        <expression-transformer expression="#[message.payload + '.4.sync-or-async-private-flow@' + java.lang.Thread.currentThread().getName()]" doc:name="Expression"/>
+        <logger message="aosync-private-flow&#38454;&#27573;&#65306;&#65306;&#65306;&#65306;&#65306;&#65306;&#65306;&#65306;&#65306;&#65306;&#65306;&#65306;&#65306;&#65306;#[payload];" level="INFO" doc:name="Copy_of_Logger"/>
+                <test:component />
+    </flow>
+    <flow name="5.legacyAdapterPrivateFlow">
+        <mulexml:xslt-transformer maxIdleTransformers="2" maxActiveTransformers="5" doc:name="XSLT"/>
+        <mulexml:xml-to-object-transformer doc:name="XML to Object"/>
+        <catch-exception-strategy doc:name="Catch Exception Strategy">
+            <jms:outbound-endpoint queue="legacyAdapter.failures" connector-ref="Active_MQ" doc:name="JMS"/>
+        </catch-exception-strategy>
+    </flow>
+</mule>

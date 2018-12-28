@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:jdbc="http://www.mulesoft.org/schema/mule/jdbc"
+	xmlns:db="http://www.mulesoft.org/schema/mule/db" xmlns:vm="http://www.mulesoft.org/schema/mule/vm" xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xmlns:spring="http://www.springframework.org/schema/beans" 
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.mulesoft.org/schema/mule/jdbc http://www.mulesoft.org/schema/mule/jdbc/current/mule-jdbc.xsd
+http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-current.xsd
+http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/vm http://www.mulesoft.org/schema/mule/vm/current/mule-vm.xsd
+http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/current/mule-db.xsd">
+    <flow name="1.message-exchange-patterns">
+        <http:listener config-ref="HTTP_Listener_Configuration" path="/payment-processor"  doc:name="HTTP"/>
+        <http:request config-ref="HTTP_Request_Configuration" path="/notifier" method="POST"  doc:name="HTTP"/>
+        <logger level="INFO" doc:name="Logger"/>
+        
+    </flow>
+    <flow name="2.acmeApiBridge">
+        <vm:inbound-endpoint  path="invokeAcmeAmi" doc:name="VM"/>
+		<jdbc:outbound-endpoint queryKey="storeData" connector-ref="jdbcConnector" doc:name="Database" exchange-pattern="one-way" queryTimeout="-1"/>
+        <http:outbound-endpoint address="http://acme.com/api" doc:name="HTTP"/>
+    </flow>
+</mule>
