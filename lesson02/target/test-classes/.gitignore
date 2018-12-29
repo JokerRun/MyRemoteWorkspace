@@ -1,0 +1,15 @@
+/01_http-jms-flow.xml
+/02_response-phase.xml
+/03_1sub-flow.xml
+/03_2choice-dispatcher-stubs.xml
+/04_private-flow.xml
+/05_message-sources.xml
+/06_message-exhange-patterns.xml
+/07_endpoint-uris.xml
+/08_message-attachments.xml
+/com/
+/fake-order.pdf
+/fake-usage-report.pdf
+/globleconfig.xml
+/log4j2-test.xml
+/09_expressions.xml
