@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:vm="http://www.mulesoft.org/schema/mule/vm" xmlns:jms="http://www.mulesoft.org/schema/mule/jms" xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xmlns:spring="http://www.springframework.org/schema/beans" 
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-current.xsd
+http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/vm http://www.mulesoft.org/schema/mule/vm/current/mule-vm.xsd
+http://www.mulesoft.org/schema/mule/jms http://www.mulesoft.org/schema/mule/jms/current/mule-jms.xsd">
+    <flow name="1.dispatchExpenseReports">
+        <vm:inbound-endpoint exchange-pattern="one-way" path="dispatchExpenseReports.in" doc:name="VM"/>
+        <jms:outbound-endpoint  connector-ref="jms_connector" doc:name="JMS" topic="expenses.status"/>
+    </flow>
+<flow name="2.logExpenseReports">
+    <jms:inbound-endpoint topic="expenses.status" connector-ref="jms_connector" doc:name="JMS"/>
+    <logger message="Expense Report Processed:#[org.mule.util.DateUtils.getTimeStamp('dd-MM-yy_HH-mm-ss.SSS')]: #[payload]" level="INFO" doc:name="Logger"/>
+</flow>
+    <flow name="03_jms-configFlow">
+        <jms:inbound-endpoint topic="expenses.status" connector-ref="jms_connector" doc:name="JMS">
+        <jms:selector expression="JMSTimestamp &gt; 0"/>
+        </jms:inbound-endpoint>
+    <logger message="#[message]" level="INFO" doc:name="Logger" category="jms-selecter::::::::::::::::::::::: "/>
+    </flow>
+</mule>

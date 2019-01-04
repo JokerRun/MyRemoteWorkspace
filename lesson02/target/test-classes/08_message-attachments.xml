@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:vm="http://www.mulesoft.org/schema/mule/vm" xmlns:scripting="http://www.mulesoft.org/schema/mule/scripting" xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xmlns:spring="http://www.springframework.org/schema/beans" 
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:test="http://www.mulesoft.org/schema/mule/test"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-current.xsd
+http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/test http://www.mulesoft.org/schema/mule/test/current/mule-test.xsd
+http://www.mulesoft.org/schema/mule/vm http://www.mulesoft.org/schema/mule/vm/current/mule-vm.xsd
+http://www.mulesoft.org/schema/mule/scripting http://www.mulesoft.org/schema/mule/scripting/current/mule-scripting.xsd">
+    
+    <flow name="1.add-attachments">
+        <vm:inbound-endpoint exchange-pattern="request-response" path="add-attachments.in" doc:name="VM"/>
+        <scripting:transformer doc:name="Script">
+            <scripting:script engine="Groovy"><![CDATA[                def filePath = message.getInboundProperty('pdfFilePath')
+                def file = new File(filePath)
+                message.addOutboundAttachment(file.name,file,'application/pdf')]]></scripting:script>
+        </scripting:transformer>
+    </flow>
+    
+    
+    <flow name="email-order-processor">
+        <inbound-endpoint address="vm://email.orders.in" doc:name="Generic"/>
+        <expression-transformer expression="#[message.inboundAttachments.values()]" doc:name="Expression"/>
+        <collection-splitter doc:name="Collection Splitter"/>
+        <outbound-endpoint address="vm://pdf-order-handler.in" doc:name="Generic"/>
+    </flow>
+    <flow name="pdf-order-handler">
+        <inbound-endpoint address="vm://pdf-order-handler.in" doc:name="Generic"/>
+        <test:component />
+    </flow>
+ 
+</mule>

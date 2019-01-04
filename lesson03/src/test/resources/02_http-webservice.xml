@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:cxf="http://www.mulesoft.org/schema/mule/cxf" xmlns:jersey="http://www.mulesoft.org/schema/mule/jersey" xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xmlns:spring="http://www.springframework.org/schema/beans" 
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-current.xsd
+http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/jersey http://www.mulesoft.org/schema/mule/jersey/current/mule-jersey.xsd
+http://www.mulesoft.org/schema/mule/cxf http://www.mulesoft.org/schema/mule/cxf/current/mule-cxf.xsd">
+    <flow name="1.brewRestService">
+        <http:listener config-ref="HTTP_Listener_Configuration" path="/rest/*" doc:name="HTTP"/>
+        <jersey:resources doc:name="REST">
+            <component class="com.lr.mule.lesson03.rest.service.BrewServiceImpl"/>
+        </jersey:resources>
+    </flow>
+    <flow name="2.brewSoapService">
+        <http:listener config-ref="HTTP_Listener_Configuration" path="/soap/*" doc:name="HTTP"/>
+        <cxf:simple-service doc:name="CXF" serviceClass="com.lr.mule.lesson03.soap.service.BrewServiceImpl" service="BrewService"/>
+        <component class="com.lr.mule.lesson03.soap.service.BrewServiceImpl" doc:name="Java"/>
+    </flow>
+</mule>

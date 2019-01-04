@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns:file="http://www.mulesoft.org/schema/mule/file" xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xmlns:spring="http://www.springframework.org/schema/beans" 
+	xmlns:test="http://www.mulesoft.org/schema/mule/test"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-current.xsd
+http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/test http://www.mulesoft.org/schema/mule/test/current/mule-test.xsd
+http://www.mulesoft.org/schema/mule/file http://www.mulesoft.org/schema/mule/file/current/mule-file.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd">
+    <flow name="1.postExpenseReports">
+        <file:inbound-endpoint path="./data/expenses/2/in" responseTimeout="10000" doc:name="File">
+            <file:filename-regex-filter pattern=".*xls$" caseSensitive="false"/>
+        </file:inbound-endpoint>
+        <http:request config-ref="HTTP_Request_Configuration" path="expenseReports" method="POST" doc:name="HTTP"/>
+    </flow>
+    <flow name="2.dummyHttpServer">
+        <http:listener config-ref="HTTP_Listener_Configuration" path="/expenseReports" doc:name="HTTP"/>
+        <test:component/>
+    </flow>
+<flow name="3.expenseReportCallback">
+    <http:listener config-ref="HTTP_Listener_Configuration" path="/expenseReportCallback" doc:name="HTTP"/>
+    <file:outbound-endpoint path="./data/expenses/status" outputPattern="#[java.util.UUID.randomUUID().toString()]-#[org.mule.util.DateUtils.getTimeStamp('dd-MM-yy_HH-mm-ss.SSS')].xml" responseTimeout="10000" doc:name="File"/>
+</flow>
+<notifications dynamic="true">
+	<notification event="ENDPOINT-MESSAGE"/>
+</notifications>
+</mule>

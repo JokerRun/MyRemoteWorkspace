@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:file="http://www.mulesoft.org/schema/mule/file" xmlns:ftp="http://www.mulesoft.org/schema/mule/ftp" xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xmlns:spring="http://www.springframework.org/schema/beans" 
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-current.xsd
+http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/ftp http://www.mulesoft.org/schema/mule/ftp/current/mule-ftp.xsd
+http://www.mulesoft.org/schema/mule/file http://www.mulesoft.org/schema/mule/file/current/mule-file.xsd">
+
+<notifications dynamic="true">
+    <notification event="ENDPOINT-MESSAGE"/>
+</notifications>
+<flow name="1.retrieveSalesStatistics">
+    <ftp:inbound-endpoint host="localhost" port="9879" path="/ftp/incoming" user="joe" password="123456" pollingFrequency="3600000" responseTimeout="10000" doc:name="FTP"/>
+    <file:outbound-endpoint path="./data/sales/statistics" responseTimeout="10000" doc:name="File"/>
+</flow>
+<flow name="2.ftpProductCatalog">
+    <file:inbound-endpoint path="./data/in" responseTimeout="10000" doc:name="File"/>
+    <ftp:outbound-endpoint host="localhost" port="9879" path="/data/prancingdonkey/catalog" user="joe" password="123456" responseTimeout="10000" doc:name="FTP"/>
+</flow>
+    
+</mule>

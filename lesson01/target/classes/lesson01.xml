@@ -9,6 +9,7 @@ http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/htt
 http://www.mulesoft.org/schema/mule/jms http://www.mulesoft.org/schema/mule/jms/current/mule-jms.xsd
 http://www.mulesoft.org/schema/mule/vm http://www.mulesoft.org/schema/mule/vm/current/mule-vm.xsd">
     <jms:activemq-connector name="Active_MQ" validateConnections="true" doc:name="Active MQ"/>
+    <http:listener-config name="HTTP_Listener_Configuration" host="0.0.0.0" port="8081" doc:name="HTTP Listener Configuration"/>
     <flow name="lesson01Flow1">
         <vm:inbound-endpoint exchange-pattern="request-response" path="qs" doc:name="VM"/>
         <logger level="INFO" doc:name="Logger"/>
@@ -16,7 +17,7 @@ http://www.mulesoft.org/schema/mule/vm http://www.mulesoft.org/schema/mule/vm/cu
         <logger level="INFO" doc:name="Logger"/>
     </flow>
     <flow name="lesson01Flow">
-        <http:inbound-endpoint exchange-pattern="request-response" host="localhost" port="8081" doc:name="HTTP"/>
+        <http:listener config-ref="HTTP_Listener_Configuration" path="/" doc:name="HTTP"/>
        <logger message="========================== #[payload]==================================" level="INFO" doc:name="Copy_of_Copy_of_Logger"/>
         <byte-array-to-string-transformer doc:name="Byte Array to String"/>
         <logger message="========================== #[payload]==================================" level="INFO" doc:name="Copy_of_Logger"/>
