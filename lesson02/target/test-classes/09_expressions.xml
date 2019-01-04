@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:pattern="http://www.mulesoft.org/schema/mule/pattern"
+	xmlns:validation="http://www.mulesoft.org/schema/mule/validation" xmlns:vm="http://www.mulesoft.org/schema/mule/vm" xmlns:mulexml="http://www.mulesoft.org/schema/mule/xml" xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xmlns:spring="http://www.springframework.org/schema/beans" 
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.mulesoft.org/schema/mule/pattern http://www.mulesoft.org/schema/mule/pattern/current/mule-pattern.xsd
+http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-current.xsd
+http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/vm http://www.mulesoft.org/schema/mule/vm/current/mule-vm.xsd
+http://www.mulesoft.org/schema/mule/xml http://www.mulesoft.org/schema/mule/xml/current/mule-xml.xsd
+http://www.mulesoft.org/schema/mule/validation http://www.mulesoft.org/schema/mule/validation/current/mule-validation.xsd">
+    <flow name="1.string-expression">
+        <vm:inbound-endpoint exchange-pattern="request-response" path="string-expression.in" doc:name="VM"/>
+        <mulexml:xslt-transformer xsl-file="to_payment_processor_call.xsl" maxIdleTransformers="2" maxActiveTransformers="5" doc:name="XSLT">
+            <mulexml:context-property key="transactionId" value="#[java.util.UUID.randomUUID().toString()]"/>
+        </mulexml:xslt-transformer>
+    </flow>
+    <flow name="2.logger">
+        <vm:inbound-endpoint exchange-pattern="request-response" path="logger.in" doc:name="VM"/>
+        <logger message="#[xpath('/invoice/@id').value]" level="INFO" category="&#36755;&#20986;&#20869;&#23481;Invoice.id&#20026;&#65306;" doc:name="Logger"/>
+        <expression-transformer expression="#[xpath('/invoice/@id').value]" doc:name="Expression"/>
+    </flow>
+    <pattern:validator name="3.ensureAttached"
+                       inboundAddress="vm://ensure.attached"
+                       outboundAddress="vm://valid.request.handler"
+                       ackExpression="#['OK']"
+                       nackExpression="#['ERROR: no attachment!']">
+        <expression-filter
+                    expression="#[!(message.inboundAttachments.empty)]" />
+    </pattern:validator>
+</mule>
