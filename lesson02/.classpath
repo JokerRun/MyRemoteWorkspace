@@ -10,7 +10,7 @@
 	<classpathentry kind="src" path="src/main/wsdl"/>
 	<classpathentry kind="src" path="src/test/munit"/>
 	<classpathentry kind="src" path="src/main/api"/>
-	<classpathentry kind="lib" path="/Users/rico/OneDrive/lib/activemq-all-5.9.1.jar"/>
-	<classpathentry kind="lib" path="/Users/rico/OneDrive/lib/mysql-connector-java.jar"/>
+	<classpathentry kind="lib" path="src/main/resources/activemq-all-5.9.1.jar"/>
+	<classpathentry kind="lib" path="src/main/resources/mysql-connector-java.jar"/>
 	<classpathentry kind="output" path="target/classes"/>
 </classpath>
