@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:file="http://www.mulesoft.org/schema/mule/file" xmlns:ftp="http://www.mulesoft.org/schema/mule/ftp" xmlns:jdbc="http://www.mulesoft.org/schema/mule/jdbc"
+	xmlns:jms="http://www.mulesoft.org/schema/mule/jms"
+	xmlns:db="http://www.mulesoft.org/schema/mule/db" xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xmlns:spring="http://www.springframework.org/schema/beans" 
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.mulesoft.org/schema/mule/jdbc http://www.mulesoft.org/schema/mule/jdbc/current/mule-jdbc.xsd
+http://www.mulesoft.org/schema/mule/jms http://www.mulesoft.org/schema/mule/jms/current/mule-jms.xsd
+http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-current.xsd
+http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/current/mule-db.xsd
+http://www.mulesoft.org/schema/mule/file http://www.mulesoft.org/schema/mule/file/current/mule-file.xsd
+http://www.mulesoft.org/schema/mule/ftp http://www.mulesoft.org/schema/mule/ftp/current/mule-ftp.xsd">
+    <notifications dynamic="true">
+        <notification event="ENDPOINT-MESSAGE"/>
+    </notifications>
+    <db:template-query name="Template_Insert" doc:name="Template Query">
+        <db:parameterized-query><![CDATA[INSERT INTO products VALUES
+(0,#[payload.name],#[payload.acv],#[payload.cost],#[payload.description])]]></db:parameterized-query>
+    </db:template-query>
+    <flow name="ftpProductsFromDatabase">
+        <file:inbound-endpoint path="./data" responseTimeout="10000" doc:name="File"/>
+        <byte-array-to-string-transformer doc:name="Byte Array to String"/>
+        <scatter-gather doc:name="Scatter-Gather">
+            <ftp:outbound-endpoint host="localhost" port="${ftp.port}" path="/data/prancingdonkey/catalog" user="admin" password="123456" responseTimeout="10000" doc:name="FTP"/>
+            <processor-chain >
+                <custom-transformer class="com.lr.mule.lesson03.transformer.CSVToListOfMapsTransformer" doc:name="Java"/>
+                <foreach doc:name="For Each">
+                    <db:insert config-ref="Generic_Database_Configuration" doc:name="Database">
+                        <db:template-query-ref name="Template_Insert"/>
+                    </db:insert>
+                </foreach>
+            </processor-chain>
+        </scatter-gather>
+    </flow>
+</mule>

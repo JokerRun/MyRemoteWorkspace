@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:vm="http://www.mulesoft.org/schema/mule/vm" xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:db="http://www.mulesoft.org/schema/mule/db" xmlns:smtp="http://www.mulesoft.org/schema/mule/smtp" xmlns:imap="http://www.mulesoft.org/schema/mule/imap" xmlns:jms="http://www.mulesoft.org/schema/mule/jms" xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xmlns:spring="http://www.springframework.org/schema/beans" 
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-current.xsd
+http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-current.xsd
+http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/jms http://www.mulesoft.org/schema/mule/jms/current/mule-jms.xsd
+http://www.mulesoft.org/schema/mule/imap http://www.mulesoft.org/schema/mule/imap/current/mule-imap.xsd
+http://www.mulesoft.org/schema/mule/smtp http://www.mulesoft.org/schema/mule/smtp/current/mule-smtp.xsd
+http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/current/mule-db.xsd
+http://www.mulesoft.org/schema/mule/vm http://www.mulesoft.org/schema/mule/vm/current/mule-vm.xsd">
+ 	<context:property-placeholder location="mule-app.properties"/>
+    <http:listener-config name="HTTP_Listener_Configuration" host="0.0.0.0" port="8081" doc:name="HTTP Listener Configuration"/>
+    <http:request-config name="HTTP_Request_Configuration" host="localhost" port="8081" doc:name="HTTP Request Configuration"/>
+    <jms:activemq-connector name="jms_connector" brokerURL="vm://localhost" validateConnections="true" doc:name="Active MQ"/>
+    <spring:beans>
+        <spring:bean id="dataSource" name="springDataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
+            <spring:property name="driverClassName" value="${jdbc.driver}"/>
+            <spring:property name="url" value="${jdbc.url}"/>
+            <spring:property name="username" value="${jdbc.username}"/>
+            <spring:property name="password" value="${jdbc.password}"/>
+        </spring:bean>
+    </spring:beans>
+    <db:generic-config name="Generic_Database_Configuration" dataSource-ref="dataSource"  doc:name="Generic Database Configuration">
+    </db:generic-config>
+    <db:template-query name="stuckOrderQuery" doc:name="Template Query">
+        <db:parameterized-query><![CDATA[SELECT id FROM orders]]></db:parameterized-query>
+    </db:template-query>
+    <vm:connector name="VM" validateConnections="true" doc:name="VM">
+        <vm:queue-profile maxOutstandingMessages="1000" persistent="false"/>
+    </vm:connector>
+</mule>

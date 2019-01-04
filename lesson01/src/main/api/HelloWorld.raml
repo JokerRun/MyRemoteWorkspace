@@ -1,0 +1,11 @@
+#%RAML 1.0
+title: Sample API
+baseUri: 0.0.0.0:8081/{version}
+version: 1.0
+/hello:
+  get:
+    responses:
+      200:
+        body:
+          application/text:
+            example: "HelloWorld"

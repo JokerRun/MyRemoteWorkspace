@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:jdbc="http://www.mulesoft.org/schema/mule/jdbc"
+	xmlns:jms="http://www.mulesoft.org/schema/mule/jms"
+	xmlns:db="http://www.mulesoft.org/schema/mule/db" xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xmlns:spring="http://www.springframework.org/schema/beans" 
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.mulesoft.org/schema/mule/jdbc http://www.mulesoft.org/schema/mule/jdbc/current/mule-jdbc.xsd
+http://www.mulesoft.org/schema/mule/jms http://www.mulesoft.org/schema/mule/jms/current/mule-jms.xsd
+http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-current.xsd
+http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/current/mule-db.xsd">
+    <flow name="pollForStuckOrders">
+        <poll doc:name="Poll">
+            <fixed-frequency-scheduler frequency="1000"/>
+            <db:select config-ref="Generic_Database_Configuration" doc:name="Database">
+                <db:template-query-ref name="stuckOrderQuery"/>
+            </db:select>
+        </poll>
+        <set-payload value="#[payload[0]]" doc:name="Set Payload"/>
+        <jms:outbound-endpoint topic="orders.status.stuck" connector-ref="jms_connector" doc:name="JMS"/>
+    </flow>
+</mule>

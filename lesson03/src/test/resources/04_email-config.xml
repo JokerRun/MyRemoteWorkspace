@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:smtp="http://www.mulesoft.org/schema/mule/smtp" xmlns:file="http://www.mulesoft.org/schema/mule/file" xmlns:jms="http://www.mulesoft.org/schema/mule/jms" xmlns:imap="http://www.mulesoft.org/schema/mule/imap" xmlns:email="http://www.mulesoft.org/schema/mule/email" xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xmlns:spring="http://www.springframework.org/schema/beans" 
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-current.xsd
+http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/imap http://www.mulesoft.org/schema/mule/imap/current/mule-imap.xsd
+http://www.mulesoft.org/schema/mule/file http://www.mulesoft.org/schema/mule/file/current/mule-file.xsd
+http://www.mulesoft.org/schema/mule/jms http://www.mulesoft.org/schema/mule/jms/current/mule-jms.xsd
+http://www.mulesoft.org/schema/mule/email http://www.mulesoft.org/schema/mule/email/current/mule-email.xsd
+http://www.mulesoft.org/schema/mule/smtp http://www.mulesoft.org/schema/mule/smtp/current/mule-smtp.xsd">
+    <expression-transformer expression="#[message.inboundAttachments.report]" name="Expression" doc:name="Expression"/>
+    <email:email-to-string-transformer name="Email_to_String" doc:name="Email to String"/>
+    <email:string-to-email-transformer name="String_to_Email" doc:name="String to Email"/>
+    <notifications>
+    	<notification event="ENDPOINT-MESSAGE"/>
+    </notifications>
+    <flow name="1.dispatchCoolingAlerts">
+        <imap:inbound-endpoint host="localhost" port="2626" user="cooling" password="password" responseTimeout="10000" doc:name="IMAP"/>
+        <scatter-gather doc:name="Scatter-Gather">
+            <file:outbound-endpoint path="./data/cooling/reports" responseTimeout="10000" transformer-refs="Expression" doc:name="File"/>
+            <jms:outbound-endpoint topic="cooling.alerts" connector-ref="jms_connector" transformer-refs="Email_to_String" doc:name="JMS"/>
+        </scatter-gather>
+    </flow>
+    <flow name="2.sendExpenseReportEmails">
+        <jms:inbound-endpoint topic="expenses.status" connector-ref="jms_connector" doc:name="JMS"/>
+        <smtp:outbound-endpoint host="localhost" port="2525"  to="accounting@prancingdonkey.com" from="mule@prancingdonkey.com" subject="Expense Report Processed" responseTimeout="10000" transformer-refs="String_to_Email" doc:name="SMTP"/>
+    </flow>
+</mule>
