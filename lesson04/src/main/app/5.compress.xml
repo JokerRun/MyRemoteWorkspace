@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:vm="http://www.mulesoft.org/schema/mule/vm" xmlns:jms="http://www.mulesoft.org/schema/mule/jms"
+	xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xmlns:spring="http://www.springframework.org/schema/beans" version="CE-3.9.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="
+http://www.mulesoft.org/schema/mule/vm http://www.mulesoft.org/schema/mule/vm/current/mule-vm.xsd 
+http://www.mulesoft.org/schema/mule/jms http://www.mulesoft.org/schema/mule/jms/current/mule-jms.xsd http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-current.xsd
+http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd">
+	<jms:activemq-connector name="dataJmsConnector" specification="1.1" />
+
+	<flow name="compress-flow">
+		<vm:inbound-endpoint path="compress.in" exchange-pattern="one-way" />
+		<string-to-byte-array-transformer />
+		<gzip-compress-transformer />
+		<jms:outbound-endpoint queue="compressedDataQueue" connector-ref="dataJmsConnector" />
+	</flow>
+
+	<flow name="uncompress-flow">
+		<jms:inbound-endpoint queue="compressedDataQueue" connector-ref="dataJmsConnector" />
+		<gzip-uncompress-transformer />
+		<byte-array-to-string-transformer />
+		<jms:outbound-endpoint queue="uncompressedDataQueue"  connector-ref="dataJmsConnector" />
+	</flow>
+</mule>

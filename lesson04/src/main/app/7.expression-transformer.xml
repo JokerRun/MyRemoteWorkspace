@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:metadata="http://www.mulesoft.org/schema/mule/metadata" xmlns:vm="http://www.mulesoft.org/schema/mule/vm" xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xmlns:spring="http://www.springframework.org/schema/beans" 
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.mulesoft.org/schema/mule/vm http://www.mulesoft.org/schema/mule/vm/current/mule-vm.xsd
+http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-current.xsd
+http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd">
+
+	<flow name="单表达式">
+		<vm:inbound-endpoint path="expression-transformer-single.in" exchange-pattern="request-response" doc:name="VM"/>
+		<expression-transformer expression="message.payload.hostAddress" doc:name="Expression"/>
+	</flow>
+	<flow name="多表达式">
+		<vm:inbound-endpoint path="expression-transformer.in" exchange-pattern="request-response" doc:name="VM"/>
+        <expression-transformer expression="{message.payload.hostAddress, message.payload.multicastAddress}" doc:name="Expression"/>
+	</flow>
+</mule>

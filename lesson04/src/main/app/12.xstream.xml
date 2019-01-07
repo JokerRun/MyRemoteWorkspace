@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:mulexml="http://www.mulesoft.org/schema/mule/xml"
+	xmlns:vm="http://www.mulesoft.org/schema/mule/vm" xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xmlns:spring="http://www.springframework.org/schema/beans" 
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.mulesoft.org/schema/mule/xml http://www.mulesoft.org/schema/mule/xml/current/mule-xml.xsd
+http://www.mulesoft.org/schema/mule/vm http://www.mulesoft.org/schema/mule/vm/current/mule-vm.xsd
+http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-current.xsd
+http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd">
+	<flow name="xstream_xml-to-object-regular-flow">
+		<vm:inbound-endpoint path="xstream_xml-to-object-regular.in"
+			exchange-pattern="request-response" doc:name="VM"/>
+		<mulexml:object-to-xml-transformer doc:name="Object to XML"/>
+        <logger message="#[payload]" level="INFO" category="&#21834;&#21834;&#21834;&#21834;&#21834;&#21834;&#21834;&#21834;&#21834;&#21834;&#21834;&#21834;&#21834;&#21834;&#21834;&#21834;&#21834;&#21834;&#21834;&#21834;&#21834;&#21834;&#21834;&#21834;&#21834;" doc:name="Logger"/>
+		<mulexml:xml-to-object-transformer doc:name="XML to Object"/>
+	</flow>
+	<flow name="xstream_xml-to-object-alias-flow">
+		<vm:inbound-endpoint path="xstream_xml-to-object-alias.in"
+			exchange-pattern="request-response" doc:name="VM"/>
+
+		<mulexml:object-to-xml-transformer doc:name="Object to XML">
+			<mulexml:alias class="org.mule.DefaultMuleMessage"
+				name="MuleMessage" />
+		</mulexml:object-to-xml-transformer>
+        <logger message="#[payload]" level="INFO" category="&#21834;&#21834;&#21834;&#21834;&#21834;&#21834;&#21834;&#21834;&#21834;&#21834;&#21834;&#21834;&#21834;&#21834;&#21834;&#21834;&#21834;&#21834;&#21834;&#21834;&#21834;&#21834;&#21834;&#21834;&#21834;" doc:name="Copy_of_Logger"/>
+		<mulexml:xml-to-object-transformer doc:name="XML to Object"/>
+        <logger message="#[payload]" level="INFO" category="&#21834;&#21834;&#21834;&#21834;&#21834;&#21834;&#21834;&#21834;&#21834;&#21834;&#21834;&#21834;&#21834;&#21834;&#21834;&#21834;&#21834;&#21834;&#21834;&#21834;&#21834;&#21834;&#21834;&#21834;&#21834;" doc:name="Copy_of_Logger"/>
+	</flow>
+
+	<flow name="xstream_xml-to-object-mule-message-flow">
+		<vm:inbound-endpoint path="xstream_xml-to-object-mule-message.in"
+			exchange-pattern="request-response" doc:name="VM"/>
+
+		<!--<start id="lis_04_xstream_xml-to-object-mule-message"/> -->
+		<mulexml:object-to-xml-transformer
+			acceptMuleMessage="true" doc:name="Object to XML"/>
+        <logger message="#[payload]" level="INFO" category="&#21834;&#21834;&#21834;&#21834;&#21834;&#21834;&#21834;&#21834;&#21834;&#21834;&#21834;&#21834;&#21834;&#21834;&#21834;&#21834;&#21834;&#21834;&#21834;&#21834;&#21834;&#21834;&#21834;&#21834;&#21834;" doc:name="Copy_of_Logger"/>
+		<!--<end id="lis_04_xstream_xml-to-object-mule-message"/> -->
+	</flow>
+
+</mule>

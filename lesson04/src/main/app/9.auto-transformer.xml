@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:vm="http://www.mulesoft.org/schema/mule/vm" xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xmlns:spring="http://www.springframework.org/schema/beans" 
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-current.xsd
+http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/vm http://www.mulesoft.org/schema/mule/vm/current/mule-vm.xsd">
+<!-- 注册自定义转换器，如不不在配置中生命，则会在auto转换器中报错：找不到将String转化为 XXX 的转换器。。 -->
+<custom-transformer class="com.lr.mule.lesson04.transformers.StringToActivityReport" doc:name="Java" name=""/>
+<flow name="9.自动转化器">
+    <vm:inbound-endpoint exchange-pattern="request-response" path="自动转换器.in" doc:name="VM"/>
+    <auto-transformer returnClass="com.lr.mule.lesson04.statistics.ActivityReport"></auto-transformer>
+</flow>
+</mule>

@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:vm="http://www.mulesoft.org/schema/mule/vm" xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xmlns:spring="http://www.springframework.org/schema/beans" 
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.mulesoft.org/schema/mule/vm http://www.mulesoft.org/schema/mule/vm/current/mule-vm.xsd
+http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-current.xsd
+http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd">
+	<flow name="删除属性">
+		<vm:inbound-endpoint path="expression-transformer-delete-simple.in" exchange-pattern="request-response" doc:name="VM"/>
+		<set-property propertyName="temp.productId" value="a value" doc:name="Property"/>
+		<set-property propertyName="temp.customerId" value="another value" doc:name="Property"/>
+		<set-property propertyName="prancing.totalValue" value="prancing value" doc:name="Property"/>
+		<set-property propertyName="iwillsurvive" value="oh yes" doc:name="Property"/>
+		<!--<start id="删除属性"/> -->
+		<remove-property propertyName="temp.productId" doc:name="Property"/>
+		<remove-property propertyName="temp.customerId" doc:name="Property"/>
+		<remove-property propertyName="prancing.totalValue" doc:name="Property"/>
+		<!--<end id="删除属性"/> -->
+	</flow>
+	<flow name="利用表达式批量删除">
+		<vm:inbound-endpoint path="expression-transformer-delete-expr.in" exchange-pattern="request-response" doc:name="VM"/>
+		<set-property propertyName="temp.productId" value="a value" doc:name="Property"/>
+		<set-property propertyName="temp.customerId" value="another value" doc:name="Property"/>
+		<set-property propertyName="prancing.totalValue" value="prancing value" doc:name="Property"/>
+		<set-property propertyName="iwillsurvive" value="oh yes" doc:name="Property"/>
+		<!--<start id="利用表达式批量删除"/> -->
+		<!-- 正则表达式 -->
+		<remove-property propertyName="temp.*" doc:name="Property"/>
+		<!-- 通配符 -->
+		<remove-property propertyName="prancing*" doc:name="Property"/>
+		<!--<end id="利用表达式批量删除"/> -->
+	</flow>
+
+
+	<flow name="添加属性">
+		<vm:inbound-endpoint path="expression-transformer-add-multiple.in" exchange-pattern="request-response" doc:name="VM"/>
+
+		<!--<start id="添加属性"/> -->
+		<set-property propertyName="Content-Type" value="application/vnd.ms-excel" doc:name="Property"/>
+		<set-property propertyName="Content-Disposition"	value="attachment; filename=stats.csv" doc:name="Property"/>
+		<!--<end id="添加属性"/> -->
+
+	</flow>
+
+
+	<flow name="属性重命名">
+		<vm:inbound-endpoint path="expression-transformer-rename.in" exchange-pattern="request-response" doc:name="VM"/>
+		<set-property propertyName="prancing.productid" value="123" doc:name="Property"/>
+		<!--<start id="属性重命名"/> -->
+		<set-property propertyName="prancing.isbn" value="#[message.outboundProperties['prancing.productid']]" doc:name="Property"/>
+		<remove-property propertyName="prancing.productid" doc:name="Property"/>
+		<!--<end id="属性重命名"/> -->
+
+	</flow>
+
+	<flow name="属性复制">
+		<vm:inbound-endpoint path="expression-transformer-copy.in" exchange-pattern="request-response" doc:name="VM"/>
+		<copy-properties propertyName="PrancingDonkeyRequestId" doc:name="Property"/>
+
+	</flow>
+
+	<flow name="添加流变量，比复制到消息属性">
+		<vm:inbound-endpoint path="expression-transformer-variable-set.in" exchange-pattern="request-response" doc:name="VM"/>
+		<set-variable variableName="prancingVariable" value="Value or expression" doc:name="Variable"/>
+		<set-property propertyName="prancingVariable" value="#[flowVars['prancingVariable']]" doc:name="Property"/>
+	</flow>
+
+</mule>
