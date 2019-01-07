@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:vm="http://www.mulesoft.org/schema/mule/vm" xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xmlns:spring="http://www.springframework.org/schema/beans" 
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-current.xsd
+http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/vm http://www.mulesoft.org/schema/mule/vm/current/mule-vm.xsd">
+    <flow name="testbyteFlow">
+        <vm:inbound-endpoint exchange-pattern="request-response" path="test.in" doc:name="VM"/>
+        <logger message="#[message]" level="INFO" category="&#25509;&#21463;&#21040;&#30340;&#28040;&#24687;&#20026;&#65306;&#65306;&#65306;&#65306;&#65306;&#65306;&#65306;&#65306;&#65306;&#65306;&#65306;&#65306;&#65306;" doc:name="Logger"/>
+        <response>
+            <logger message="#[message]" level="INFO" category="&#21457;&#21453;&#21453;&#22797;&#22797;&#21453;&#21453;&#22797;&#22797;&#21453;&#21453;&#22797;&#22797;&#21453;&#21453;&#22797;&#22797;" doc:name="Logger"/>
+        </response>
+        <custom-transformer class="lesson04.ByteArrayOutputStreamToByteArrayTransformer" doc:name="OutputStreamToByteArray"/>
+        <logger message="#[message]" level="INFO" category="&#39318;&#27425;&#36716;&#21270;&#21518;&#21834;&#21834;&#21834;&#21834;&#21834;&#21834;&#21834;&#21834;&#21834;&#21834;&#21834;&#21834;" doc:name="Logger"/>
+        <byte-array-to-object-transformer returnClass="java.util.Map" doc:name="Byte Array to Object"/>
+        <logger message="#[payload]" level="INFO" category="&#21834;&#21834;&#21834;&#21834;&#21834;&#21834;&#21834;&#21834;&#21834;&#21834;&#21834;&#21834;&#21834;&#21834;&#21834;&#21834;&#21834;&#21834;&#21834;&#21834;&#21834;&#21834;&#21834;&#21834;&#21834;&#21834;&#21834;&#21834;&#21834;&#21834;&#21834;&#21834;" doc:name="Logger"/>
+    </flow>
+</mule>

@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:mulexml="http://www.mulesoft.org/schema/mule/xml"
+	xmlns:vm="http://www.mulesoft.org/schema/mule/vm" xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xmlns:spring="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="
+http://www.mulesoft.org/schema/mule/xml http://www.mulesoft.org/schema/mule/xml/current/mule-xml.xsd http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-current.xsd
+http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/vm http://www.mulesoft.org/schema/mule/vm/current/mule-vm.xsd">
+	<flow name="xsl-simple-flow">
+		<vm:inbound-endpoint path="xsl-simple.in" exchange-pattern="request-response" />
+		<mulexml:xslt-transformer xsl-file="xsl/prancing-to-gondor-bm.xsl" />
+		<logger message="#[payload[0]]" level="INFO"  category="xsl-simple-flow处理结果:::::::::::::::::::::::::::::::::::::" />
+		<logger message="#[message]" category="xsl-simple-flow处理结果:::::::::::::::::::::::::::::::::::::" />
+	</flow>
+
+	<flow name="xsl-param-flow">
+		<vm:inbound-endpoint path="xsl-param.in" exchange-pattern="request-response" />
+		<mulexml:xslt-transformer xsl-file="xsl/prancing-to-gondor-bm.xsl">
+			<mulexml:context-property key="discount"	value="10" />
+		</mulexml:xslt-transformer>
+		<logger message="#[payload[0]]" level="INFO"  category="xsl-param-flow处理结果:::::::::::::::::::::::::::::::::::::" />
+		<logger message="#[message]" level="INFO"  category="xsl-param-flow处理结果:::::::::::::::::::::::::::::::::::::" />
+	</flow>
+
+	<flow name="xsl-param-expr-flow">
+		<vm:inbound-endpoint path="xsl-param-expr.in" exchange-pattern="request-response" />
+		<mulexml:xslt-transformer xsl-file="xsl/prancing-to-gondor-bm.xsl">
+			<mulexml:context-property key="discount"	value="#[message.inboundProperties['discount']]" />
+		</mulexml:xslt-transformer>
+		<logger message="#[payload[0]]" level="INFO"  category="xsl-param-expr-flow处理结果:::::::::::::::::::::::::::::::::::::" />
+		<logger message="#[message]" level="INFO"  category="xsl-param-expr-flow处理结果:::::::::::::::::::::::::::::::::::::" />
+	</flow>
+
+	<flow name="xsl-idle-flow">
+		<vm:inbound-endpoint path="xsl-idle.in" exchange-pattern="request-response" />
+		<mulexml:xslt-transformer maxActiveTransformers="5" maxIdleTransformers="5" xsl-file="xsl/prancing-to-gondor-bm.xsl" />
+		<logger message="#[payload[0]]" level="INFO"  category="xsl-idle-flow处理结果:::::::::::::::::::::::::::::::::::::" />
+		<logger message="#[message]" level="INFO"  category="xsl-idle-flow处理结果:::::::::::::::::::::::::::::::::::::" />
+	</flow>
+
+</mule>

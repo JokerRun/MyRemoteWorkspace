@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:mulexml="http://www.mulesoft.org/schema/mule/xml"
+	xmlns:vm="http://www.mulesoft.org/schema/mule/vm" xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xmlns:spring="http://www.springframework.org/schema/beans" 
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.mulesoft.org/schema/mule/xml http://www.mulesoft.org/schema/mule/xml/current/mule-xml.xsd
+http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-current.xsd
+http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/vm http://www.mulesoft.org/schema/mule/vm/current/mule-vm.xsd">
+<flow name="xpath表达式">
+    <vm:inbound-endpoint path="xpath表达式.in" exchange-pattern="request-response"  doc:name="VM"/>
+    <set-property propertyName="productId" value="#[xpath('/products/product[1]/id').text]" doc:name="Property" />
+</flow>
+<flow name="xpath提取器">
+    <vm:inbound-endpoint path="xpath提取器.in" exchange-pattern="request-response"  doc:name="VM"/>
+    <mulexml:xpath-extractor-transformer expression="/products/product[1]" resultType="NODESET" />
+<!-- <expression-transformer expression="#[xpath3('/products/product[1]') ]"  returnClass="org.w3c.dom.NodeList" doc:name="Expression"/> -->
+</flow>
+    
+    
+</mule>

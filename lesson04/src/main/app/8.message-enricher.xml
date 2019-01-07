@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:metadata="http://www.mulesoft.org/schema/mule/metadata"
+	xmlns:vm="http://www.mulesoft.org/schema/mule/vm" xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xmlns:spring="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.mulesoft.org/schema/mule/vm http://www.mulesoft.org/schema/mule/vm/current/mule-vm.xsd
+http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-current.xsd
+http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd">
+<flow name="0.伪服务器" >
+	<vm:inbound-endpoint path="伪服务器.in" exchange-pattern="request-response" doc:name="VM"/>
+	<expression-transformer doc:name="Expression">
+           <return-argument evaluator="groovy" expression="[id:123,name:'John Doe',currencyCode:'USD',promoCode:'ABC123']"/>
+	</expression-transformer>
+</flow>
+<flow name="1.单修饰器">
+    <vm:inbound-endpoint exchange-pattern="request-response" path="单修饰器.in" doc:name="VM"/>
+    <enricher source="#[message.payload.currencyCode]" target="#[flowVars.currencyCode]" doc:name="Message Enricher">
+        <processor-chain doc:name="Processor Chain">
+    		<vm:outbound-endpoint exchange-pattern="request-response" path="伪服务器.in" doc:name="VM"/>
+            <logger level="INFO" category="伪服务器返回的消息为： " doc:name="Logger"/>
+        </processor-chain>
+    </enricher>
+    <component class="com.lr.mule.lesson04.InvoiceProcessor" doc:name="Java"/>
+</flow>
+<flow name="2.多单修饰器">
+    <vm:inbound-endpoint exchange-pattern="request-response" path="多修饰器.in" doc:name="VM"/>
+    <enricher  doc:name="Message Enricher">
+        <processor-chain doc:name="Processor Chain">
+    		<vm:outbound-endpoint exchange-pattern="request-response" path="伪服务器.in" doc:name="VM"/>
+            <logger level="INFO" category="伪服务器返回的消息为： " doc:name="Logger"/>
+        </processor-chain>
+        <enrich source="#[message.payload.currencyCode]" target="#[flowVars.currencyCode]"/>
+        <enrich source="#[message.payload.promoCode]" target="#[flowVars.promoCode]"/>
+    </enricher>
+    <expression-transformer doc:name="mel表达式返回数组" expression="{flowVars.currencyCode, flowVars.promoCode}"/>
+</flow>
+
+
+
+
+</mule>

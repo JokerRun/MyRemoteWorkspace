@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:json="http://www.mulesoft.org/schema/mule/json"
+	xmlns:vm="http://www.mulesoft.org/schema/mule/vm"
+	xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xmlns:spring="http://www.springframework.org/schema/beans" 
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.mulesoft.org/schema/mule/json http://www.mulesoft.org/schema/mule/json/current/mule-json.xsd
+http://www.mulesoft.org/schema/mule/vm http://www.mulesoft.org/schema/mule/vm/current/mule-vm.xsd
+http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-current.xsd
+http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd">
+    <flow name="json-marshalling-flow">
+        <vm:inbound-endpoint path="json-marshalling.in" exchange-pattern="request-response" doc:name="VM"/>
+<json:object-to-json-transformer doc:name="Object to JSON"/>
+        <logger message="#[payload]" level="INFO" category=":::::::::::::::::::::AAAAAAAAAAAAAAAAA" doc:name="Logger"/>
+<json:json-to-object-transformer 
+    returnClass="com.lr.mule.lesson04.model.json.Provider" />
+        <logger level="INFO" doc:name="Logger"/>
+        
+    </flow>
+
+    <flow name="json-query-flow">
+        <vm:inbound-endpoint path="json-query.in" exchange-pattern="request-response" doc:name="VM"/>
+
+<!--<start id="lis_04_json-query"/>-->
+<json:json-to-object-transformer
+     returnClass="java.util.HashMap" doc:name="JSON to Object"/>
+<set-property propertyName="requestType"
+     value="#[message.payload.requestType]" doc:name="Property"/><!--<co id="lis04_JsonPath-config-1_item" />-->
+<set-property propertyName="productId"
+     value="#[message.payload.products[0].productId]" doc:name="Property"/><!--<co id="lis04_JsonPath-config-2_array" />-->
+<!--<end id="lis_04_json-query"/>-->
+
+    </flow>
+    
+</mule>
