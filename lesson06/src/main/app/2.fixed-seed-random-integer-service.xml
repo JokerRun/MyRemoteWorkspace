@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xmlns:spring="http://www.springframework.org/schema/beans" 
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-current.xsd
+http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd">
+    <global-property name="seed" value="10" doc:name="Global Property"/>
+    <flow name="2.fixed-seed-random-integer-serviceFlow">
+        <inbound-endpoint exchange-pattern="request-response" address="vm://fixed-seed-random-integer-service.in" doc:name="Generic"/>
+        <component doc:name="Java">
+        	<no-arguments-entry-point-resolver>
+        		<include-entry-point method="nextInt"/>
+        	</no-arguments-entry-point-resolver>
+        	<prototype-object class="java.util.Random">
+        		<property key="seed" value="${seed}"/>
+        	</prototype-object>
+          <!--   <singleton-object class="java.util.Random">
+                <property key="seed" value="${seed}"/>
+            </singleton-object> -->
+        </component>
+    </flow>
+</mule>
