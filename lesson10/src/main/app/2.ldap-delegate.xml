@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:mule-ss="http://www.mulesoft.org/schema/mule/spring-security"
+	xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xmlns:spring="http://www.springframework.org/schema/beans" 
+	xmlns:ss="http://www.springframework.org/schema/security"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="
+http://www.mulesoft.org/schema/mule/spring-security http://www.mulesoft.org/schema/mule/spring-security/current/mule-spring-security.xsd http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-current.xsd
+http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security.xsd
+http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd">
+    <spring:beans>
+    	<ss:ldap-server root="dc=prancingdonkey,dc=com" url="ldap://localhost:389"/>
+        <ss:authentication-manager alias="authenticationManager">
+        	<ss:ldap-authentication-provider user-dn-pattern="uid={0},ou=people" group-search-base="ou=groups"/>
+        </ss:authentication-manager>
+    </spring:beans>
+	<mule-ss:security-manager>
+		<mule-ss:delegate-security-provider delegate-ref="authenticationManager" name="mule-spring-security-ldap"/>
+	</mule-ss:security-manager>
+
+
+
+
+</mule>
