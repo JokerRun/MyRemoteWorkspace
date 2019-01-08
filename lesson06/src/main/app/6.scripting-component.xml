@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:scripting="http://www.mulesoft.org/schema/mule/scripting" xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xmlns:spring="http://www.springframework.org/schema/beans" 
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-current.xsd
+http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/scripting http://www.mulesoft.org/schema/mule/scripting/current/mule-scripting.xsd">
+    <flow name="6.scripting-componentFlow">
+        <inbound-endpoint exchange-pattern="request-response" address="vm://rhino-message-enritchment-service.in" doc:name="Generic"/>
+        <logger level="INFO" doc:name="Logger"/>
+        <scripting:component doc:name="Script">
+            <scripting:script engine="JavaScript"><![CDATA[ if (payload.search("STATUS: CRITICAL") != -1) {
+   message.setProperty("PRIORITY", 'HIGH');
+ }
+ result = message]]></scripting:script>
+        </scripting:component>
+        <logger level="INFO" doc:name="Logger" message="#[payload]"/>
+        <logger message="#[message.outboundProperties.PRIORITY]" level="INFO" category="&#65306;&#65306;&#65306;&#65306;&#65306;&#65306;&#65306;&#65306;&#65306;&#65306;&#65306;&#65306;&#65306;&#65306;&#65306;&#65306;&#65306;&#65306;&#65306;&#65306;&#65306;&#65306;&#65306;&#65306;&#21834;&#21834;&#21834;&#21834;&#21834;&#21834;&#21834;&#21834;" doc:name="Logger"/>
+
+    </flow>
+</mule>

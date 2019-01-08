@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xmlns:spring="http://www.springframework.org/schema/beans" 
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-current.xsd
+http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd">
+    <endpoint address="vm://calculateShippingCostErrorChannel.in" name="ErrorProcessorChannel" doc:name="Generic"/>
+    <flow name="10.component-lifecycleFlow">
+        <inbound-endpoint exchange-pattern="request-response" address="vm://calculateShippingCost.in" doc:name="Generic"/>
+        <component doc:name="Java">
+            <singleton-object class="com.lr.mule.lesson06.ShippingCostCalculator">
+                <property key="errorProcessorChannel" value="IGNORE" value-ref="ErrorProcessorChannel"/>
+            </singleton-object>
+        </component>
+    </flow>
+</mule>

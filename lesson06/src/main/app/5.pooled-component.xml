@@ -6,12 +6,12 @@
 	xsi:schemaLocation="http://www.mulesoft.org/schema/mule/file http://www.mulesoft.org/schema/mule/file/current/mule-file.xsd
 http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-current.xsd
 http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd">
-	<file:connector name="NonDeletingFileConnector"	autoDelete="false" doc:name="File"/>
+	<file:connector name="NonDeletingFileConnector"	autoDelete="true" doc:name="File"/>
 	<flow name="5.pooled-componentFlow">
 		<inbound-endpoint exchange-pattern="request-response" address="vm://pooled-md5-service.in" doc:name="Generic"/>
 		<pooled-component>
 			<prototype-object class="com.lr.mule.lesson06.Md5FileHasher">
-				<property key="fileConnector" value-ref="NonDeletingFileConnector" />
+				<property key="fileConnector" value="ignored_for_value-ref_seted" value-ref="NonDeletingFileConnector" />
 				<property key="sourceFolder" value="${java.io.tmpdir}" />
 			</prototype-object>
 
@@ -21,6 +21,5 @@ http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/cor
 				exhaustedAction="WHEN_EXHAUSTED_WAIT" 
 				maxWait="15000" />
 		</pooled-component>
-        <logger message="${java.io.tmpdir}" level="INFO" category="&#32452;&#20214;&#37197;&#32622;&#65306;&#65306;&#65306;&#65306;&#65306;&#65306;&#65306;&#65306;&#65306;&#65306;&#65306;&#65306;&#65306;&#65306;&#65306;&#65306;&#65306;&#65306;&#65306;&#65306;&#65306;&#65306;&#65306;&#65306;&#65306;&#65306;" doc:name="Logger"/>
 	</flow>
 </mule>
