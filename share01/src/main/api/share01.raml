@@ -1,0 +1,22 @@
+#%RAML 1.0
+title: share01
+baseUri: 0.0.0.0:8081
+/hello:
+  displayName: Mule HelloWorld
+  get:
+    responses: 
+      200:
+        body: 
+          application/text:
+            example: HelloMule
+/sendToMQ:
+  displayName: 发送数据到MQ
+  post:
+    body: 
+      application/text:
+        example: Message To MQ
+    responses: 
+      200:
+        body: 
+          application/text:
+            example: Message Dispatched Successfully !

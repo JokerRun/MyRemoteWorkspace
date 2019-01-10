@@ -28,7 +28,7 @@ public class SecurityFilterTestCase extends AbstractConfigurationLoaderTestCase
 	{
 		MuleClient client = new MuleClient(muleContext);
 
-		MuleMessage result = client.send("http://admin:admin@localhost:8081/secure", "", null);
+		MuleMessage result = client.send("http://victor:password@localhost:8081/secure", "", null);
 		assertNull(result.getExceptionPayload());
 		assertThat(result.getPayload(),is(not(instanceOf(ExceptionPayload.class))));
 		assertThat(result.getPayload(),is(not(instanceOf(NullPayload.class))));

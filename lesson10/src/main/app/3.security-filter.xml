@@ -11,21 +11,26 @@ http://www.mulesoft.org/schema/mule/spring-security http://www.mulesoft.org/sche
 http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security.xsd">
 
 	<spring:beans>
-		<ss:authentication-manager alias="in_momery_user_service" id="in-momery-user-service"><!--  -->
-			<ss:authentication-provider>
-				<ss:user-service id="userService">
-					<ss:user name="victor" password="password" authorities="ROLE_ADMIN" />
-				</ss:user-service>
-			</ss:authentication-provider>
-		</ss:authentication-manager>
-    	<ss:ldap-server root="dc=example,dc=org" url="ldap://localhost:389"/>
-        <ss:authentication-manager alias="ldap_user_service"  id="ldap-user-service"><!--  -->
-        	<ss:ldap-authentication-provider user-dn-pattern="cn={0}" /><!--group-search-base="ou=groups"  -->
-        </ss:authentication-manager>		
+<!-- 	<ss:authentication-manager id="momory">
+		<ss:authentication-provider>
+			<ss:user-service id="userService">
+				<ss:user name="john" password="password" authorities="ROLE_ADMIN" />
+				<ss:user name="david" password="password" authorities="ROLE_ADMIN" />
+				<ss:user name="victor" password="password" authorities="ROLE_ADMIN" />
+			</ss:user-service>
+		</ss:authentication-provider>
+	</ss:authentication-manager> -->
+	
+	<ss:ldap-server root="dc=example,dc=org" url="ldap://localhost:389" id="ldapserver" />
+	<ss:authentication-manager id="ldap">
+		<ss:ldap-authentication-provider
+			user-dn-pattern="uid={0},ou=people" group-search-base="ou=groups" server-ref="ldapserver"/>
+	</ss:authentication-manager>
 	</spring:beans>
 
+
 	<mule-ss:security-manager>
-		<mule-ss:delegate-security-provider	name="mule-user-service-provider" delegate-ref="ldap-user-service" />
+		<mule-ss:delegate-security-provider	name="mule-user-service-provider" delegate-ref="ldap" />
 	</mule-ss:security-manager>
 
 	<flow name="authenticatedHttp">
