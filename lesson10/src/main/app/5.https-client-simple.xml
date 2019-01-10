@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:https="http://www.mulesoft.org/schema/mule/https"
+	xmlns:vm="http://www.mulesoft.org/schema/mule/vm"
+	xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xmlns:spring="http://www.springframework.org/schema/beans" 
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.mulesoft.org/schema/mule/https http://www.mulesoft.org/schema/mule/https/current/mule-https.xsd
+http://www.mulesoft.org/schema/mule/vm http://www.mulesoft.org/schema/mule/vm/current/mule-vm.xsd
+http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-current.xsd
+http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd">
+
+<!--<start id="lis_10_https_client_google"/>-->
+<flow name="getGoogle">
+  <vm:inbound-endpoint address="vm://getGoogle.in" 
+    exchange-pattern="request-response" doc:name="VM"/>
+  
+  <https:outbound-endpoint host="www.baidu.com"
+    port="443" 
+    method="GET" doc:name="HTTP" exchange-pattern="request-response"/>
+    
+  <object-to-string-transformer doc:name="Object to String"/>
+        <logger message="#[payload]  #[message]" level="INFO" category="&#21834;&#21834;&#21834;&#21834;&#21834;&#21834;&#21834;&#21834;&#21834;&#21834;&#21834;&#21834;&#21834;" doc:name="Logger"/>
+</flow>
+
+</mule>
